@@ -1,50 +1,74 @@
-“Granular Synth for Unity — License (GSL-1.0)”
+Granular Synth for Unity — License (GSL-1.0)
 
-Copyright (c) 2026 Matthias Peene. All rights reserved.
+Version 1.0
+Last updated: July 10, 2026
 
-Definitions
+Copyright © 2026 Matthias Peene. All rights reserved.
 
-Software: the Granular Synth package for Unity, including all code, binaries, shaders, presets, samples, documentation, and related files.
+1. Definitions
 
-You: the individual or legal entity that obtained a valid license to the Software (e.g., via the Unity Asset Store).
+Software means the Granular Synth for Unity package, including all source code, binaries, shaders, presets, samples, documentation, and related files.
 
-Licensed Product: an interactive or non-interactive end product (game/app/film/etc.) that includes substantial original content and where the Software is used as a component, not the primary value.
+You means the individual or legal entity that has obtained a valid license to use the Software, including through the Unity Asset Store.
 
-License Grant
-Subject to this license, You are granted a non-exclusive, non-transferable license to:
+Licensed Product means a finished application, game, film, simulation, or other end product that contains substantial original content and incorporates the Software solely as a component rather than as the primary value of the product.
 
-Use the Software to develop Licensed Products (including commercial products).
+2. License Grant
 
-Modify the Software for internal use (e.g., adapting it to your project pipeline).
+Subject to this License, You are granted a non-exclusive, non-transferable license to:
 
-Distribute the Software only as integrated/embedded in a Licensed Product, in a way that does not allow third parties to extract the Software for reuse as an asset/tool.
+Use the Software to create Licensed Products, including commercial products.
+Modify the Software solely for use in Your own Licensed Products. Any modified version remains subject to this License.
+Distribute the Software only as incorporated into a Licensed Product and not in a form intended for reuse, modification, or redistribution as a standalone asset, plugin, or development tool.
+3. Restrictions
 
-Restrictions (what you may NOT do)
 You may not:
 
-Resell, redistribute, repackage, sublicense, rent, lease, or share the Software (modified or unmodified) as a standalone product or as part of an asset pack, toolkit, template, starter project, repository, or similar distribution.
+Sell, resell, redistribute, sublicense, rent, lease, lend, or otherwise make the Software available as a standalone product.
+Include the Software, whether modified or unmodified, in any asset pack, toolkit, template, starter project, SDK, repository, or similar distribution.
+Publish or upload the Software to GitHub, forums, cloud storage, file-sharing services, or any other platform where third parties can access or obtain it, except as incorporated into a Licensed Product.
+Use the Software, in whole or in part, to create, distribute, or sell a competing asset, plugin, library, or tool whose primary purpose is to provide functionality substantially derived from the Software.
+Reverse engineer, decompile, or disassemble the Software except where such restrictions are prohibited by applicable law.
+4. Contractors and Team Members
 
-Publish, upload, or otherwise make the Software available to third parties (including via GitHub, forums, file-sharing sites, or “asset swaps”), except as embedded in a Licensed Product as described above.
+You may allow employees, contractors, or team members working on Your behalf to access and use the Software solely for the purpose of developing Your Licensed Product.
 
-Use the Software to create a competing asset/tool whose primary purpose is the distribution of substantially similar functionality or content.
+They may not retain, redistribute, or use the Software for any other purpose after their work on Your behalf has ended.
 
-Contractors / Team Members
-You may allow contractors or team members working on your behalf to access and use the Software solely for your project, provided they do not retain or redistribute it outside that work.
+5. Ownership
 
-Attribution
-Attribution is not required (unless you choose to require it—optional).
+The Software is licensed, not sold.
 
-Ownership
-The Software is licensed, not sold. All right, title, and interest remain with the Licensor.
+All intellectual property rights in the Software remain the exclusive property of Matthias Peene.
 
-No Warranty
-The Software is provided “as is”, without warranties of any kind.
+You retain ownership of any modifications You create; however, those modifications may only be used and distributed in accordance with this License.
 
-Limitation of Liability
-To the maximum extent permitted by law, Licensor will not be liable for any damages arising from use of the Software.
+6. Attribution
 
-Termination
-This license terminates automatically if You breach it. Upon termination, You must stop using and destroy all copies of the Software not embedded in Licensed Products.
+Attribution is not required.
 
-Unity Asset Store
-If the Software is obtained through the Unity Asset Store, Your use must also comply with applicable Unity Asset Store terms. If there is a conflict, the controlling terms will be those required by Unity for Asset Store distribution.
+7. No Warranty
+
+The Software is provided "AS IS", without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
+
+8. Limitation of Liability
+
+To the maximum extent permitted by applicable law, the Licensor shall not be liable for any claim, damages, losses, or other liability arising from or relating to the use or inability to use the Software.
+
+9. Termination
+
+This License terminates automatically if You breach any of its terms.
+
+Upon termination, You must immediately cease using the Software and destroy or permanently delete all copies of the Software that are not already incorporated into Licensed Products.
+
+Sections relating to ownership, warranty disclaimers, limitation of liability, and governing law shall survive termination.
+
+10. Governing Law
+
+This License shall be governed by and construed in accordance with the laws of Belgium, without regard to its conflict of law provisions.
+
+11. Unity Asset Store
+
+If the Software is obtained through the Unity Asset Store, its use must also comply with the applicable Unity Asset Store Terms.
+
+If any provision of this License conflicts with mandatory Unity Asset Store requirements, those mandatory requirements shall prevail only to the extent necessary to resolve the conflict.
