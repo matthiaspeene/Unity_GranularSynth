@@ -1,0 +1,5 @@
+*.csproj
+*.sln
+.vscode/
+.idea/
+.DS_Store

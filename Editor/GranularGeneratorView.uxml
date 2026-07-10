@@ -1,0 +1,31 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xmlns:gv="NotJustSound.GranularSynth.Editor" editor-extension-mode="True">
+    <ui:VisualElement name="VisualElement" class="root" style="height: auto; width: auto; max-width: 100%; max-height: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;">
+        <ui:VisualElement name="General" style="flex-grow: 1; max-height: none; min-height: auto; align-items: stretch; height: auto; padding-top: 12px; padding-bottom: 12px;">
+            <ui:Label text="General Settings" style="margin-bottom: 5px; -unity-font-style: bold;"/>
+            <ui:Toggle label="Live Update" name="liveUpdate" tooltip="When enabled, changes to parameters will be applied to all active instances in real-time." value="true"/>
+            <gv:AudioClipFieldWithPreview name="sample" style="height: 128px; width: auto;"/>
+            <ui:MinMaxSlider value="0,0.1" low-limit="0" high-limit="1" name="startPosition" tooltip="Startposition"/>
+            <ui:Toggle label="Anti-Phasing" name="antiPhasing" tooltip="If enabled, will re-randomise grain positions that start within 20ms of another grain. This can help reduce phasing artifacts." value="false"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Params" class="section" style="padding-top: 12px; padding-bottom: 12px; height: auto;">
+            <ui:Label text="Volume &amp; Pitch" style="margin-bottom: 5px; -unity-font-style: bold;"/>
+            <ui:MinMaxSlider name="grainVolume" label="Gain (dB)" low-limit="-60" high-limit="0" style="height: auto;"/>
+            <ui:Slider label="Gain Random Power" value="1" high-value="5" name="grainVolumePower" low-value="0.1" show-input-field="true" tooltip="Adjusts the distribution of volume randomization. Higher values favor quieter grains."/>
+            <ui:MinMaxSlider name="grainPitch" label="Pitch (semitones)" low-limit="-24" high-limit="24" style="height: auto;"/>
+            <ui:MinMaxSlider name="grainPan" label="Pan" low-limit="-1" high-limit="1" style="height: auto;" tooltip="Random pan range per grain. -1 = full left, 0 = center, +1 = full right."/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Playback" style="padding-top: 12px; padding-bottom: 12px; margin-top: 0;">
+            <ui:Label text="Density" style="margin-bottom: 5px; -unity-font-style: bold;"/>
+            <ui:Slider label="Overlap" value="2" high-value="20" name="grainOverlap" low-value="0.1" show-input-field="true"/>
+            <ui:Slider label="Rate (hz)" value="6" high-value="2000" name="grainRate" low-value="0.1" fill="false" show-input-field="true"/>
+            <gv:GrainOverlapVisualizer name="grainOverlapVisualizer" style="min-height: auto; background-color: rgb(38, 38, 38); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgb(76, 76, 76); border-right-color: rgb(76, 76, 76); border-top-color: rgb(76, 76, 76); border-bottom-color: rgb(76, 76, 76);"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Size" enabled="true" style="flex-grow: 1; padding-top: 12px; padding-bottom: 12px;">
+            <ui:Label text="Shape" style="-unity-font-style: bold;"/>
+            <uie:CurveField label="Curve" value="{0,0,0,0,0,0,Free,Free,False,None};{200,1,0,0,0,0,Free,Free,False,None};{400,0,0,0,0,0,Free,Free,False,None}+(ClampForever,ClampForever)" name="grainShape" style="height: 63px; padding-top: 10px; padding-bottom: 10px;"/>
+            <ui:Slider label="Curve Power" value="2" high-value="2" name="grainShapePower" low-value="0.1" show-input-field="true" tooltip="Adjusts how the visual curve maps to audible gain. higher values make the shape sound steeper."/>
+            <ui:Slider label="Size (ms)" value="42" high-value="1000" name="grainDuration" show-input-field="true"/>
+            <ui:Slider label="Random%" value="0" high-value="100" name="grainDurationRandom" show-input-field="true"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

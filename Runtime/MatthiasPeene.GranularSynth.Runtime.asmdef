@@ -1,0 +1,10 @@
+{
+    "name": "NotJustSound.GranularSynth.Runtime",
+    "rootNamespace": "NotJustSound.GranularSynth",
+    "references": [
+        "Unity.Mathematics",
+        "Unity.Burst"
+    ],
+    "allowUnsafeCode": true,
+    "autoReferenced": true
+}

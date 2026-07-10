@@ -1,0 +1,12 @@
+{
+    "name": "NotJustSound.GranularSynth.Editor",
+    "rootNamespace": "NotJustSound.GranularSynth.Editor",
+    "references": [
+        "NotJustSound.GranularSynth.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "allowUnsafeCode": false,
+    "autoReferenced": true
+}
