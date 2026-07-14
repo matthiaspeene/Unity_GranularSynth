@@ -35,8 +35,7 @@ This license is intended, among other things, to let You try the Software in you
 
 ## 3. License Grant — Commercial Use
 
-Commercial Use of the Software requires a separate, paid Commercial License from Matthias Peene. Details, pricing, and purchase options are available at [insert URL / Unity Asset Store link].
-
+Commercial Use of the Software requires a separate, paid Commercial License from Matthias Peene. Details, pricing, and purchase options will be made available in the future. Prodcut is planned for release on the Unity Asset Store.
 Once a Commercial License is obtained, the terms of that license govern Your Commercial Use of the Software. In the absence of terms specific to the Commercial License that conflict with this document, Sections 4 through 11 below continue to apply.
 
 Using the Software for Commercial Use without a valid Commercial License is a breach of this License.
