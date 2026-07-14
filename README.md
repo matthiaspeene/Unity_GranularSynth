@@ -24,7 +24,7 @@ This package can be [installed via the Unity Package Manager](https://docs.unity
 2. Add the audio file you want to granulate to the **AudioClip** field.
 3. Assign the ScriptableObject to an AudioSource in the scene. *Make sure the AudioSource is audible to your AudioListener.*
 4. With **Live Preview** enabled, play the scene to hear the granular synth in action.
-5. Configure the different parameters until you achieve the desired result.
+5. Configure the different parameters of the scriptable object until you achieve the desired result.
 
 ### Dynamic Input
 
