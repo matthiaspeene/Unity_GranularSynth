@@ -1,5 +1,5 @@
 {
-  "name": "com.notjustsound.granularsynth",
+  "name": "studio.notjustsound.granular",
   "version": "0.1.0",
   "displayName": "Granular Synth",
   "description": "Granular synthesis package for Unity.",
