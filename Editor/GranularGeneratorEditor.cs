@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEditor.UIElements;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using NotJustSound.GranularSynth;
@@ -174,15 +175,16 @@ namespace NotJustSound.GranularSynth.Editor
             var grainShapePowerField = root.Q<Slider>("grainShapePower");
             if (grainShapePowerField != null) grainShapePowerField.BindProperty(serializedObject.FindProperty("grainShapePower"));
 
+            // Modulation settings list
+            var modulationSettingsContainer = root.Q<VisualElement>("modulationSettingsList");
+            var addModulationSettingButton = root.Q<Button>("addModulationSetting");
+
             // Bind and update the GrainOverlapVisualizer
             var overlapVisualizer = root.Q<GrainOverlapVisualizer>("grainOverlapVisualizer");
             if (overlapVisualizer != null)
             {
                 // Initial update
                 UpdateOverlapVisualizer(overlapVisualizer, serializedObject);
-
-                // Track changes to update the visualizer
-                root.TrackSerializedObjectValue(serializedObject, so => UpdateOverlapVisualizer(overlapVisualizer, so));
 
                 // Add a zoom slider for the visualizer
                 var zoomSlider = new Slider("Visualizer Zoom (seconds)", 0.1f, 5.0f)
@@ -204,6 +206,35 @@ namespace NotJustSound.GranularSynth.Editor
                 }
             }
 
+            void RefreshModulationSettings()
+            {
+                if (modulationSettingsContainer != null)
+                {
+                    RebuildModulationSettingsList(modulationSettingsContainer, serializedObject);
+                }
+            }
+
+            RefreshModulationSettings();
+
+            root.TrackSerializedObjectValue(serializedObject, so =>
+            {
+                if (overlapVisualizer != null)
+                {
+                    UpdateOverlapVisualizer(overlapVisualizer, so);
+                }
+
+                RefreshModulationSettings();
+            });
+
+            if (addModulationSettingButton != null)
+            {
+                addModulationSettingButton.clicked += () =>
+                {
+                    AddModulationSetting(serializedObject);
+                    RefreshModulationSettings();
+                };
+            }
+
             return root;
         }
 
@@ -213,6 +244,146 @@ namespace NotJustSound.GranularSynth.Editor
             visualizer.GrainShapePower = so.FindProperty("grainShapePower").floatValue;
             visualizer.GrainRate = so.FindProperty("grainRate").floatValue;
             visualizer.GrainDurationRange = so.FindProperty("GrainDurationRange").vector2Value;
+        }
+
+        private void AddModulationSetting(SerializedObject serializedObject)
+        {
+            var modulationSettingsProperty = serializedObject.FindProperty("modulationSettings");
+            if (modulationSettingsProperty == null || !modulationSettingsProperty.isArray)
+            {
+                return;
+            }
+
+            serializedObject.Update();
+
+            int newIndex = modulationSettingsProperty.arraySize;
+            modulationSettingsProperty.arraySize++;
+
+            var elementProperty = modulationSettingsProperty.GetArrayElementAtIndex(newIndex);
+            var targetProperty = elementProperty.FindPropertyRelative("target");
+            if (targetProperty != null)
+            {
+                targetProperty.enumValueIndex = 0;
+            }
+
+            var amountProperty = elementProperty.FindPropertyRelative("amount");
+            if (amountProperty != null)
+            {
+                amountProperty.floatValue = 0f;
+            }
+
+            serializedObject.ApplyModifiedProperties();
+        }
+
+        private void RebuildModulationSettingsList(VisualElement container, SerializedObject serializedObject)
+        {
+            container.Clear();
+
+            var modulationSettingsProperty = serializedObject.FindProperty("modulationSettings");
+            if (modulationSettingsProperty == null || !modulationSettingsProperty.isArray)
+            {
+                container.Add(new Label("Modulation settings are unavailable."));
+                return;
+            }
+
+            for (int i = 0; i < modulationSettingsProperty.arraySize; i++)
+            {
+                var elementProperty = modulationSettingsProperty.GetArrayElementAtIndex(i);
+                container.Add(CreateModulationSettingRow(elementProperty, i, serializedObject));
+            }
+        }
+
+        private VisualElement CreateModulationSettingRow(SerializedProperty elementProperty, int index, SerializedObject serializedObject)
+        {
+            var row = new VisualElement();
+            row.style.flexDirection = FlexDirection.Row;
+            row.style.alignItems = Align.Center;
+            row.style.marginBottom = 6;
+
+            var label = new Label($"Setting {index + 1}")
+            {
+                style =
+                {
+                    minWidth = 76,
+                    unityTextAlign = TextAnchor.MiddleLeft,
+                    marginRight = 6
+                }
+            };
+            row.Add(label);
+
+            var targetProperty = elementProperty.FindPropertyRelative("target");
+            if (targetProperty != null)
+            {
+                var targetChoices = new List<string>(targetProperty.enumDisplayNames);
+                if (targetChoices.Count > 0)
+                {
+                    var currentIndex = Mathf.Clamp(targetProperty.enumValueIndex, 0, targetChoices.Count - 1);
+                    var targetField = new PopupField<string>(targetChoices, currentIndex)
+                    {
+                        style =
+                        {
+                            flexGrow = 1,
+                            marginRight = 6
+                        }
+                    };
+
+                    targetField.RegisterValueChangedCallback(evt =>
+                    {
+                        serializedObject.Update();
+                        var modulationSettings = serializedObject.FindProperty("modulationSettings");
+                        if (modulationSettings == null || index >= modulationSettings.arraySize)
+                        {
+                            return;
+                        }
+
+                        var refreshedElement = modulationSettings.GetArrayElementAtIndex(index);
+                        var refreshedTarget = refreshedElement.FindPropertyRelative("target");
+                        if (refreshedTarget != null)
+                        {
+                            refreshedTarget.enumValueIndex = targetChoices.IndexOf(evt.newValue);
+                            serializedObject.ApplyModifiedProperties();
+                        }
+                    });
+
+                    row.Add(targetField);
+                }
+            }
+
+            var amountProperty = elementProperty.FindPropertyRelative("amount");
+            if (amountProperty != null)
+            {
+                var amountField = new Slider(-1f, 1f)
+                {
+                    value = amountProperty.floatValue,
+                    showInputField = true,
+                    style =
+                    {
+                        minWidth = 180
+                    }
+                };
+
+                amountField.RegisterValueChangedCallback(evt =>
+                {
+                    serializedObject.Update();
+                    var modulationSettings = serializedObject.FindProperty("modulationSettings");
+                    if (modulationSettings == null || index >= modulationSettings.arraySize)
+                    {
+                        return;
+                    }
+
+                    var refreshedElement = modulationSettings.GetArrayElementAtIndex(index);
+                    var refreshedAmount = refreshedElement.FindPropertyRelative("amount");
+                    if (refreshedAmount != null)
+                    {
+                        refreshedAmount.floatValue = evt.newValue;
+                        serializedObject.ApplyModifiedProperties();
+                    }
+                });
+
+                row.Add(amountField);
+            }
+
+            return row;
         }
     }
 }

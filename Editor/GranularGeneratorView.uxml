@@ -12,7 +12,7 @@
             <ui:MinMaxSlider name="grainVolume" label="Gain (dB)" low-limit="-60" high-limit="0" style="height: auto;"/>
             <ui:Slider label="Gain Random Power" value="1" high-value="5" name="grainVolumePower" low-value="0.1" show-input-field="true" tooltip="Adjusts the distribution of volume randomization. Higher values favor quieter grains."/>
             <ui:MinMaxSlider name="grainPitch" label="Pitch (semitones)" low-limit="-24" high-limit="24" style="height: auto;"/>
-            <ui:MinMaxSlider name="grainPan" label="Pan" low-limit="-1" high-limit="1" style="height: auto;" tooltip="Random pan range per grain. -1 = full left, 0 = center, +1 = full right."/>
+            <ui:MinMaxSlider name="grainPan" label="Pan" low-limit="-1" high-limit="1" tooltip="Random pan range per grain. -1 = full left, 0 = center, +1 = full right." style="height: auto;"/>
         </ui:VisualElement>
         <ui:VisualElement name="Playback" style="padding-top: 12px; padding-bottom: 12px; margin-top: 0;">
             <ui:Label text="Density" style="margin-bottom: 5px; -unity-font-style: bold;"/>
@@ -26,6 +26,11 @@
             <ui:Slider label="Curve Power" value="2" high-value="2" name="grainShapePower" low-value="0.1" show-input-field="true" tooltip="Adjusts how the visual curve maps to audible gain. higher values make the shape sound steeper."/>
             <ui:Slider label="Size (ms)" value="42" high-value="1000" name="grainDuration" show-input-field="true"/>
             <ui:Slider label="Random%" value="0" high-value="100" name="grainDurationRandom" show-input-field="true"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="Modulation" enabled="true" style="flex-grow: 1; padding-top: 12px; padding-bottom: 12px;">
+            <ui:Label text="Modulation" style="-unity-font-style: bold;"/>
+            <ui:Button name="addModulationSetting" text="+" tooltip="Add a modulation setting." style="width: 28px; height: 24px; margin-top: 6px; margin-bottom: 6px;"/>
+            <ui:VisualElement name="modulationSettingsList" style="flex-grow: 1;"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -10,11 +10,13 @@
     "granular",
     "synthesis"
   ],
-  "author": {
-    "name": "Matthias Peene"
-  },
   "dependencies": {
     "com.unity.mathematics": "1.4.0",
     "com.unity.burst": "1.8.29"
+  },
+  "author": {
+    "name": "NotJustSound",
+    "url": "https://notjustsound.studio",
+    "email": "matthias@notjustsound.studio"
   }
 }

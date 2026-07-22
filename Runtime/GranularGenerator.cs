@@ -9,6 +9,30 @@ using static UnityEngine.Audio.ProcessorInstance;
 
 namespace NotJustSound.GranularSynth
 {
+    enum ModulationTarget
+    {
+        GrainRate,
+        GrainPositionOffset,
+        GrainPositionWidth,
+        GrainPitchOffset,
+        GrainPitchWidth,
+        GrainVolumeOffset,
+        GrainVolumeWidth,
+        GrainPanOffset,
+        GrainPanWidth,
+        GrainVolumePower,
+        GrainDurationOffset,
+        GrainDurationWidth,
+        GrainShapePower
+    }
+
+    [Serializable]
+    struct ModulationSetting
+    {
+        public ModulationTarget target;
+        [Range(-1f, 1f)] public float amount;
+    }
+
     [CreateAssetMenu(fileName = "NewGranularGenerator", menuName = "Audio/Generators/Granular Generator", order = 1)]
     public partial class GranularGenerator : ScriptableObject, IAudioGenerator
     {
@@ -66,6 +90,10 @@ namespace NotJustSound.GranularSynth
 
         [Tooltip("If enabled, will re-randomise grain positions that start within 20ms of another grain. This can help reduce phasing artifacts.")]
         [SerializeField] private bool antiPhasing = false;
+
+        [Header("Modulation Settings")]
+        [Tooltip("Modulation settings for various grain parameters.")]
+        [SerializeField] private ModulationSetting[] modulationSettings;
 
         #endregion
 
