@@ -14,10 +14,10 @@ namespace NotJustSound.GranularSynth.Editor
             var root = new VisualElement();
 
             // Load UXML
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/com.NotJustSound.granularsynth/Editor/GranularGeneratorView.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Packages/studio.notjustsound.granular/Editor/GranularGeneratorView.uxml");
             if (visualTree == null)
             {
-                root.Add(new Label("Could not load UXML: Packages/com.NotJustSound.granularsynth/Editor/GranularGeneratorView.uxml"));
+                root.Add(new Label("Could not load UXML: Packages/studio.notjustsound.granular/Editor/GranularGeneratorView.uxml"));
                 return root;
             }
 
