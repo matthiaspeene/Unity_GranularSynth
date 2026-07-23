@@ -2,7 +2,26 @@ using Unity.Collections;
 
 namespace NotJustSound.GranularSynth
 {
-    // Message structs for parameter updates
+    // Message structs for modulation updates
+    public readonly struct Modulation1Event
+    {
+        public readonly float value;
+        public Modulation1Event(float value) => this.value = value;
+    }
+
+    public readonly struct Modulation2Event
+    {
+        public readonly float value;
+        public Modulation2Event(float value) => this.value = value;
+    }
+
+    public readonly struct Modulation3Event
+    {
+        public readonly float value;
+        public Modulation3Event(float value) => this.value = value;
+    }
+
+    // Message structs for direct parameter updates
     public readonly struct GrainRateEvent
     {
         public readonly float value;

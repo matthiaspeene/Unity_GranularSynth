@@ -39,6 +39,24 @@ namespace NotJustSound.GranularSynth
 
             public Response OnMessage(ControlContext context, Pipe pipe, Message message)
             {
+                #region Modulation Messages
+                if (message.Is<Modulation1Event>())
+                {
+
+                    return Response.Handled;
+                }
+                if (message.Is<Modulation2Event>())
+                {
+
+                    return Response.Handled;
+                }
+                if (message.Is<Modulation3Event>())
+                {
+                    
+                    return Response.Handled;
+                }
+
+                #region Internal Messages
                 if (message.Is<GrainRateEvent>())
                 {
                     pipe.SendData(context, message.Get<GrainRateEvent>());
@@ -79,7 +97,7 @@ namespace NotJustSound.GranularSynth
                     pipe.SendData(context, message.Get<GrainShapeEvent>());
                     return Response.Handled;
                 }
-
+                #endregion
                 return Response.Unhandled;
             }
 
