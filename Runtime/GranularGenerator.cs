@@ -216,179 +216,6 @@ namespace NotJustSound.GranularSynth
 
         #endregion
 
-        #region Properties
-
-        public bool LiveUpdate
-        {
-            get => liveUpdate;
-            set => liveUpdate = value;
-        }
-
-        public float GrainRate
-        {
-            get => grainRate;
-            set
-            {
-                if (Mathf.Abs(grainRate - value) > Mathf.Epsilon)
-                {
-                    grainRate = value;
-                    // Update overlap based on new rate
-                    float avgDuration = (GrainDurationRange.x + GrainDurationRange.y) * 0.5f * 0.001f;
-                    if (avgDuration > 0)
-                    {
-                        grainOverlap = grainRate * avgDuration;
-                    }
-                    BroadcastMessage(new GrainRateEvent(grainRate));
-                }
-            }
-        }
-
-        public float GrainOverlap
-        {
-            get => grainOverlap;
-            set
-            {
-                if (Mathf.Abs(grainOverlap - value) > Mathf.Epsilon)
-                {
-                    grainOverlap = Mathf.Max(0.1f, value);
-                    // Calculate rate from overlap and average duration
-                    float avgDuration = (GrainDurationRange.x + GrainDurationRange.y) * 0.5f * 0.001f;
-                    if (avgDuration > 0)
-                    {
-                        grainRate = grainOverlap / avgDuration;
-                        BroadcastMessage(new GrainRateEvent(grainRate));
-                    }
-                }
-            }
-        }
-
-        public Vector2 StartPosition
-        {
-            get => StartPositionRange;
-            set
-            {
-                StartPositionRange = value;
-                BroadcastMessage(new GrainPositionEvent(StartPositionRange.x, StartPositionRange.y));
-            }
-        }
-
-        public Vector2 GrainPitch
-        {
-            get => GrainPitchRange;
-            set
-            {
-                GrainPitchRange = value;
-                BroadcastMessage(new GrainPitchEvent(GrainPitchRange.x, GrainPitchRange.y));
-            }
-        }
-
-        public Vector2 GrainVolume
-        {
-            get => GrainVolumeRange;
-            set
-            {
-                GrainVolumeRange = value;
-                BroadcastMessage(new GrainVolumeEvent(GrainVolumeRange.x, GrainVolumeRange.y));
-            }
-        }
-
-        public float GrainVolumePower
-        {
-            get => grainVolumePower;
-            set
-            {
-                if (Mathf.Abs(grainVolumePower - value) > Mathf.Epsilon)
-                {
-                    grainVolumePower = value;
-                    BroadcastMessage(new GrainVolumePowerEvent(grainVolumePower));
-                }
-            }
-        }
-
-        public Vector2 GrainPan
-        {
-            get => GrainPanRange;
-            set
-            {
-                GrainPanRange = value;
-                BroadcastMessage(new GrainPanEvent(GrainPanRange.x, GrainPanRange.y));
-            }
-        }
-
-        public float GrainDurationBase
-        {
-            get => grainDurationBase;
-            set
-            {
-                if (Mathf.Abs(grainDurationBase - value) > Mathf.Epsilon)
-                {
-                    grainDurationBase = value;
-                    UpdateDurationRange();
-                    // Recalculate rate from overlap to maintain consistent overlap
-                    float avgDuration = (GrainDurationRange.x + GrainDurationRange.y) * 0.5f * 0.001f;
-                    if (avgDuration > 0)
-                    {
-                        grainRate = grainOverlap / avgDuration;
-                    }
-                    BroadcastMessage(new GrainDurationEvent(GrainDurationRange.x, GrainDurationRange.y));
-                }
-            }
-        }
-
-        public float GrainDurationRandom
-        {
-            get => grainDurationRandom;
-            set
-            {
-                if (Mathf.Abs(grainDurationRandom - value) > Mathf.Epsilon)
-                {
-                    grainDurationRandom = value;
-                    UpdateDurationRange();
-                    // Recalculate rate from overlap to maintain consistent overlap
-                    float avgDuration = (GrainDurationRange.x + GrainDurationRange.y) * 0.5f * 0.001f;
-                    if (avgDuration > 0)
-                    {
-                        grainRate = grainOverlap / avgDuration;
-                    }
-                    BroadcastMessage(new GrainDurationEvent(GrainDurationRange.x, GrainDurationRange.y));
-                }
-            }
-        }
-
-        public Vector2 GrainDuration
-        {
-            get => GrainDurationRange;
-            set
-            {
-                GrainDurationRange = value;
-                // Note: Setting GrainDurationRange directly bypasses base/random sliders
-                // but we keep it for compatibility if something else sets it.
-                // We should probably update base/random to reflect the new range if possible,
-                // but it's ambiguous. For now just update rate.
-                float avgDuration = (GrainDurationRange.x + GrainDurationRange.y) * 0.5f * 0.001f;
-                if (avgDuration > 0)
-                {
-                    grainRate = grainOverlap / avgDuration;
-                }
-                BroadcastMessage(new GrainDurationEvent(GrainDurationRange.x, GrainDurationRange.y));
-            }
-        }
-
-        public float GrainShapePower
-        {
-            get => grainShapePower;
-            set
-            {
-                if (Mathf.Abs(grainShapePower - value) > Mathf.Epsilon)
-                {
-                    grainShapePower = value;
-                    ValidateGrainShape(); // This will bake and broadcast
-                }
-            }
-        }
-
-        #endregion
-
         #region Lifecycle
 
         private void OnDisable()
@@ -403,45 +230,51 @@ namespace NotJustSound.GranularSynth
         {
             if (!liveUpdate) return;
 
-            // 1. Detect primary changes with a stable epsilon
-            bool overlapChanged = Mathf.Abs(grainOverlap - m_LastGrainOverlap) > 1e-5f;
+            SyncRateOverlapDuration(out bool rateChanged, out bool overlapChanged, out bool durationChanged);
+            BroadcastChangedParameters(rateChanged, overlapChanged, durationChanged);
 
-            // Update Duration Range from Base/Random %
+            if (HasModulationMatrixChanged())
+            {
+                BroadcastModulationMatrix();
+            }
+
+            ValidateGrainShape();
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        private const float ChangeEpsilon = 1e-5f;
+
+        private void SyncRateOverlapDuration(out bool rateChanged, out bool overlapChanged, out bool durationChanged)
+        {
+            overlapChanged = IsChanged(grainOverlap, m_LastGrainOverlap);
+
             UpdateDurationRange();
-            bool durationChanged = m_LastGrainDuration != GrainDurationRange;
+            durationChanged = IsChanged(GrainDurationRange, m_LastGrainDuration);
+            rateChanged = IsChanged(grainRate, m_LastGrainRate);
 
-            bool rateChanged = Mathf.Abs(grainRate - m_LastGrainRate) > 1e-5f;
-
-            // Calculate average duration for linking
             float avgDuration = (GrainDurationRange.x + GrainDurationRange.y) * 0.5f * 0.001f;
+            if (avgDuration <= 0f)
+            {
+                return;
+            }
 
-            // 2. Sync Logic (Hierarchy of Intent)
-            // Priority 1: User explicitly changed Overlap -> Update Rate
-            if (overlapChanged)
+            if (overlapChanged || durationChanged)
             {
-                if (avgDuration > 0)
-                {
-                    grainRate = grainOverlap / avgDuration;
-                    rateChanged = true;
-                }
+                grainRate = grainOverlap / avgDuration;
+                rateChanged = true;
             }
-            // Priority 2: User explicitly changed Duration -> Maintain Overlap by adjusting Rate
-            else if (durationChanged)
-            {
-                if (avgDuration > 0)
-                {
-                    grainRate = grainOverlap / avgDuration;
-                    rateChanged = true;
-                }
-            }
-            // Priority 3: User explicitly changed Rate -> Update Overlap to match
             else if (rateChanged)
             {
                 grainOverlap = grainRate * avgDuration;
                 overlapChanged = true;
             }
+        }
 
-            // 3. Update Caches and Broadcast Events
+        private void BroadcastChangedParameters(bool rateChanged, bool overlapChanged, bool durationChanged)
+        {
             if (rateChanged)
             {
                 m_LastGrainRate = grainRate;
@@ -459,132 +292,31 @@ namespace NotJustSound.GranularSynth
                 BroadcastMessage(new GrainDurationEvent(GrainDurationRange.x, GrainDurationRange.y));
             }
 
-            if (m_LastStartPosition != StartPositionRange)
+            if (UpdateIfChanged(ref m_LastStartPosition, StartPositionRange))
             {
-                m_LastStartPosition = StartPositionRange;
                 BroadcastMessage(new GrainPositionEvent(StartPositionRange.x, StartPositionRange.y));
             }
 
-            if (m_LastGrainPitch != GrainPitchRange)
+            if (UpdateIfChanged(ref m_LastGrainPitch, GrainPitchRange))
             {
-                m_LastGrainPitch = GrainPitchRange;
                 BroadcastMessage(new GrainPitchEvent(GrainPitchRange.x, GrainPitchRange.y));
             }
 
-            if (m_LastGrainVolume != GrainVolumeRange)
+            if (UpdateIfChanged(ref m_LastGrainVolume, GrainVolumeRange))
             {
-                m_LastGrainVolume = GrainVolumeRange;
                 BroadcastMessage(new GrainVolumeEvent(GrainVolumeRange.x, GrainVolumeRange.y));
             }
 
-            if (Mathf.Abs(m_LastGrainVolumePower - grainVolumePower) > 1e-5f)
+            if (UpdateIfChanged(ref m_LastGrainVolumePower, grainVolumePower))
             {
-                m_LastGrainVolumePower = grainVolumePower;
                 BroadcastMessage(new GrainVolumePowerEvent(grainVolumePower));
             }
 
-            if (m_LastGrainPan != GrainPanRange)
+            if (UpdateIfChanged(ref m_LastGrainPan, GrainPanRange))
             {
-                m_LastGrainPan = GrainPanRange;
                 BroadcastMessage(new GrainPanEvent(GrainPanRange.x, GrainPanRange.y));
             }
-
-            if (HasModulationMatrixChanged())
-            {
-                BroadcastModulationMatrix();
-            }
-
-            ValidateGrainShape();
         }
-
-        #endregion
-
-        #region Baking
-
-        private void BakeSample()
-        {
-            if (sample == null) return;
-            if (bakedSample.IsCreated) return;
-
-            float[] data = new float[sample.samples * sample.channels];
-            sample.GetData(data, 0);
-
-            bakedSample = new NativeArray<float>(data, Allocator.Persistent);
-            bakedSampleRate = sample.frequency;
-            bakedSampleLength = sample.samples;
-            bakedSampleChannels = sample.channels;
-        }
-
-        private void BakeGrainShape()
-        {
-            if (grainShape == null || grainShape.length == 0) return;
-            if (bakedGrainShape.IsCreated) return;
-
-            float curveLength = grainShape.keys[grainShape.length - 1].time;
-            int resolution = Mathf.Max(512, Mathf.CeilToInt(curveLength * 512));
-
-            bakedGrainShape = new NativeArray<float>(resolution, Allocator.Persistent);
-            bakedGrainShapeLength = resolution;
-
-            for (int i = 0; i < resolution; i++)
-            {
-                float t = (float)i / (resolution - 1) * curveLength;
-                bakedGrainShape[i] = Mathf.Pow(grainShape.Evaluate(t), grainShapePower);
-            }
-
-        }
-
-        private void ValidateGrainShape()
-        {
-            if (grainShape == null || grainShape.length == 0) return;
-            if (!bakedGrainShape.IsCreated) return; // Not baked yet, nothing to update
-
-            float curveLength = grainShape.keys[grainShape.length - 1].time;
-            // Assuming resolution is derived from length as in BakeGrainShape
-            int newLength = Mathf.Max(512, Mathf.CeilToInt(curveLength * 512));
-
-            if (newLength != bakedGrainShapeLength)
-            {
-                Debug.LogWarning("GranularGenerator: GrainShape length changed. Runtime update ignored. Please restart playback to apply length changes.");
-                return;
-            }
-
-            // Check if contents changed
-            bool changed = false;
-            // Optimization: check a few points or just re-bake and compare?
-            // Re-baking is safer.
-            var tempShape = new NativeArray<float>(bakedGrainShapeLength, Allocator.Temp);
-            for (int i = 0; i < bakedGrainShapeLength; i++)
-            {
-                float t = (float)i / (bakedGrainShapeLength - 1) * curveLength;
-                tempShape[i] = Mathf.Pow(grainShape.Evaluate(t), grainShapePower);
-                if (Mathf.Abs(tempShape[i] - bakedGrainShape[i]) > 1e-4f)
-                {
-                    changed = true;
-                }
-            }
-
-            if (changed)
-            {
-                // Update local cache
-                bakedGrainShape.CopyFrom(tempShape);
-
-                if (HasLiveInstances())
-                {
-                    // Create persistent array for message only when something can receive it.
-                    var msgShape = new NativeArray<float>(bakedGrainShapeLength, Allocator.Persistent);
-                    msgShape.CopyFrom(tempShape);
-
-                    BroadcastMessage(new GrainShapeEvent(msgShape));
-                }
-            }
-
-            tempShape.Dispose();
-        }
-
-        #endregion
-
-        #region Helper Methods
 
         private void UpdateDurationRange()
         {
@@ -593,6 +325,38 @@ namespace NotJustSound.GranularSynth
                 Mathf.Max(1f, grainDurationBase - offset),
                 grainDurationBase + offset
             );
+        }
+
+        private static bool IsChanged(float current, float previous)
+        {
+            return Mathf.Abs(current - previous) > ChangeEpsilon;
+        }
+
+        private static bool IsChanged(Vector2 current, Vector2 previous)
+        {
+            return current != previous;
+        }
+
+        private static bool UpdateIfChanged(ref float previous, float current)
+        {
+            if (!IsChanged(current, previous))
+            {
+                return false;
+            }
+
+            previous = current;
+            return true;
+        }
+
+        private static bool UpdateIfChanged(ref Vector2 previous, Vector2 current)
+        {
+            if (!IsChanged(current, previous))
+            {
+                return false;
+            }
+
+            previous = current;
+            return true;
         }
 
         private void BroadcastMessage<T>(T message) where T : unmanaged

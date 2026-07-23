@@ -119,7 +119,7 @@ namespace NotJustSound.GranularSynth
                         {
                             grainShape.CopyFrom(shapeEvt.shape);
                         }
-                        // We must dispose the array passed via message to avoid leaks
+                        // End of GrainShapeEvent ownership chain: always dispose here.
                         shapeEvt.shape.Dispose();
                     }
                 }
