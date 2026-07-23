@@ -28,9 +28,12 @@ This package can be [installed via the Unity Package Manager](https://docs.unity
 
 ### Dynamic Input
 
-*Granular synthesis is best suited for dynamic sounds such as vehicles, scraping, and creaky doors. You may want to configure dynamic control using the* `GranularRangeControl` *MonoBehaviour.*
-Attach the script to an AudioSource with a granulator and modulate the input by calling `.setInput(float input)`.
+*Granular synthesis is best suited for dynamic sounds such as vehicles, scraping, and creaky doors.*
 
-For advanced modulation, you can send your own modulation messages as demonstrated in the `GranularRangeControl` script.
+To configure dynamic controls you can modulate values by assigning targets in the modulation matrix. 
+
+To modulate the inputs: attach the script to an AudioSource with a granulator and call `audioSource.SetModulation1(normalizedInput);`.
+
+For more specific or advanced modulation, you can send your own modulation messages. Check out the deprecated methods in `GranularSynthExtension.cs` to get a grasp on how to do this.
 
 To add additional features or write custom messages, see the [Unity Documentation](https://docs.unity3d.com/6000.3/Documentation/Manual/audio-scriptable-processors.html).

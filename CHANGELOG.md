@@ -8,3 +8,7 @@ All notable changes to the granular synth will be documented in this file.
 - Controls for: Rate, Duration, Playback Position, Pitch, Pan, Gain and Grain Shape.
 - Anti phasing toggle
 - Stereo File Support
+
+## [0.2.0] - 2026-07-23
+### Modulation Matrix
+- Added a modulation matrix to make dynamic parameters more easily configurable.

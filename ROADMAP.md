@@ -30,31 +30,6 @@ Light Saber Sound System
 Weather System
 Velocity based scraping rock
 
-### Macros and Modulation Matrix
-
-I want to make modulation inputs configurable inside the ScriptableObject.
-
-Currently, it takes a lot of effort to go from a single input (for example, the velocity of a box hitting the floor) to a dynamic sound.
-
-With a modulation matrix, we'd be able to assign inputs to specific synth parameters much more quickly.
-
-I'm thinking of using an array of modulation structs.
-
-Each struct would contain:
-- Source enum
-- Destination enum
-- Amount
-
-For example:
-
-```text
-Source Mod1 -> PitchMin (+6 semitones)
-Source Mod1 -> PitchMax (+12 semitones)
-Source Mod1 -> GrainRate (+12 Hz)
-```
-
-Now we only need to change **Mod1** to alter the entire character of the sound by a modulatable amount.
-
 ### Replacing the Grain Curve with Math-Based Shapes
 
 The grain curve currently needs to be read from memory, which isn't ideal.
