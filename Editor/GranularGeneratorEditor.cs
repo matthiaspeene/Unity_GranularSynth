@@ -300,16 +300,44 @@ namespace NotJustSound.GranularSynth.Editor
             row.style.alignItems = Align.Center;
             row.style.marginBottom = 6;
 
-            var label = new Label($"Setting {index + 1}")
+            var sourceProperty = elementProperty.FindPropertyRelative("source");
+            if (sourceProperty != null)
             {
-                style =
+                var sourceChoices = new List<string>(sourceProperty.enumDisplayNames);
+                if (sourceChoices.Count > 0)
                 {
-                    minWidth = 76,
-                    unityTextAlign = TextAnchor.MiddleLeft,
-                    marginRight = 6
+                    var currentIndex = Mathf.Clamp(sourceProperty.enumValueIndex, 0, sourceChoices.Count - 1);
+                    var sourceField = new PopupField<string>(sourceChoices, currentIndex)
+                    {
+                        style =
+                        {
+                            flexGrow = 1,
+                            minWidth = 90,
+                            marginRight = 6
+                        }
+                    };
+
+                    sourceField.RegisterValueChangedCallback(evt =>
+                    {
+                        serializedObject.Update();
+                        var modulationSettings = serializedObject.FindProperty("modulationSettings");
+                        if (modulationSettings == null || index >= modulationSettings.arraySize)
+                        {
+                            return;
+                        }
+
+                        var refreshedElement = modulationSettings.GetArrayElementAtIndex(index);
+                        var refreshedSource = refreshedElement.FindPropertyRelative("source");
+                        if (refreshedSource != null)
+                        {
+                            refreshedSource.enumValueIndex = sourceChoices.IndexOf(evt.newValue);
+                            serializedObject.ApplyModifiedProperties();
+                        }
+                    });
+
+                    row.Add(sourceField);
                 }
-            };
-            row.Add(label);
+            }
 
             var targetProperty = elementProperty.FindPropertyRelative("target");
             if (targetProperty != null)
@@ -323,6 +351,7 @@ namespace NotJustSound.GranularSynth.Editor
                         style =
                         {
                             flexGrow = 1,
+                            minWidth = 120,
                             marginRight = 6
                         }
                     };
@@ -383,7 +412,37 @@ namespace NotJustSound.GranularSynth.Editor
                 row.Add(amountField);
             }
 
+            var removeButton = new Button(() =>
+            {
+                serializedObject.Update();
+                var modulationSettings = serializedObject.FindProperty("modulationSettings");
+                if (modulationSettings == null || !modulationSettings.isArray || index >= modulationSettings.arraySize)
+                {
+                    return;
+                }
+
+                modulationSettings.DeleteArrayElementAtIndex(index);
+                if (index < modulationSettings.arraySize)
+                {
+                    modulationSettings.DeleteArrayElementAtIndex(index);
+                }
+
+                serializedObject.ApplyModifiedProperties();
+            })
+            {
+                text = "×",
+                tooltip = "Remove modulation target"
+            };
+            removeButton.style.width = 20;
+            removeButton.style.height = 20;
+            removeButton.style.marginLeft = 6;
+            removeButton.style.paddingLeft = 0;
+            removeButton.style.paddingRight = 0;
+            removeButton.style.unityTextAlign = TextAnchor.MiddleCenter;
+            row.Add(removeButton);
+
             return row;
         }
+
     }
 }

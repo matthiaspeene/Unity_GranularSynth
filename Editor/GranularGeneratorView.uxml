@@ -28,9 +28,16 @@
             <ui:Slider label="Random%" value="0" high-value="100" name="grainDurationRandom" show-input-field="true"/>
         </ui:VisualElement>
         <ui:VisualElement name="Modulation" enabled="true" style="flex-grow: 1; padding-top: 12px; padding-bottom: 12px;">
-            <ui:Label text="Modulation" style="-unity-font-style: bold;"/>
-            <ui:Button name="addModulationSetting" text="+" tooltip="Add a modulation setting." style="width: 28px; height: 24px; margin-top: 6px; margin-bottom: 6px;"/>
+            <ui:Label text="ModulationMatrix" style="margin-bottom: 5px; -unity-font-style: bold;"/>
+            <ui:VisualElement name="modulationSettingsHeader" style="flex-direction: row; align-items: center; margin-bottom: 4px; width: 100%;">
+                <ui:Label text="Source" style="flex-grow: 1; min-width: 90px; margin-right: 6px; -unity-font-style: bold;"/>
+                <ui:Label text="Target" style="flex-grow: 1; min-width: 120px; margin-right: 6px; -unity-font-style: bold;"/>
+                <ui:Label text="Amount" style="min-width: 180px; -unity-font-style: bold;"/>
+            </ui:VisualElement>
             <ui:VisualElement name="modulationSettingsList" style="flex-grow: 1;"/>
+            <ui:VisualElement style="align-items: center; margin-top: 6px;">
+                <ui:Button name="addModulationSetting" text="+" tooltip="Add a modulation setting." style="width: 28px; height: 24px;"/>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
