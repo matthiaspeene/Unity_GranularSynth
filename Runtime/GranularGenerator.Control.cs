@@ -398,10 +398,16 @@ namespace NotJustSound.GranularSynth
                         continue;
                     }
 
-                    total += setting.amount * GetModulationValue(setting.source);
+                    total += ClampModulationAmount(setting.target, setting.amount) * GetModulationValue(setting.source);
                 }
 
                 return total;
+            }
+
+            private static float ClampModulationAmount(ModulationTarget target, float amount)
+            {
+                Vector2 range = ModulationSettingRanges.GetAmountRange(target);
+                return Mathf.Clamp(amount, range.x, range.y);
             }
 
             private float GetModulationValue(ModulationSource source)

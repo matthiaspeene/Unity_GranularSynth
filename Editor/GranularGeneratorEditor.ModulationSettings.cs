@@ -130,7 +130,12 @@ namespace NotJustSound.GranularSynth.Editor
                 return;
             }
 
-            var amountField = new Slider(-1f, 1f)
+            var targetProperty = elementProperty.FindPropertyRelative("target");
+            var amountRange = targetProperty != null
+                ? ModulationSettingRanges.GetAmountRange((ModulationTarget)targetProperty.enumValueIndex)
+                : new Vector2(-1f, 1f);
+
+            var amountField = new Slider(amountRange.x, amountRange.y)
             {
                 value = amountProperty.floatValue,
                 showInputField = true,
@@ -153,7 +158,7 @@ namespace NotJustSound.GranularSynth.Editor
                 var refreshedAmount = refreshedElement.FindPropertyRelative("amount");
                 if (refreshedAmount != null)
                 {
-                    refreshedAmount.floatValue = evt.newValue;
+                    refreshedAmount.floatValue = Mathf.Clamp(evt.newValue, amountRange.x, amountRange.y);
                     serializedObject.ApplyModifiedProperties();
                 }
             });
