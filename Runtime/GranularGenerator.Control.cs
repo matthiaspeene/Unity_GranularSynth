@@ -188,6 +188,7 @@ namespace NotJustSound.GranularSynth
                 }
                 if (message.Is<GrainShapeEvent>())
                 {
+                    // Forward without disposing; ownership continues to Realtime.Update.
                     pipe.SendData(context, message.Get<GrainShapeEvent>());
                     return Response.Handled;
                 }
@@ -261,51 +262,43 @@ namespace NotJustSound.GranularSynth
                 Vector2 grainDuration = EvaluateDurationRange();
                 float grainShapePower = EvaluateScalar(ModulationTarget.GrainShapePower, baseGrainShapePower, minimum: 0.1f, maximum: 2f);
 
-                if (!Mathf.Approximately(lastGrainRate, grainRate))
+                if (UpdateIfChanged(ref lastGrainRate, grainRate))
                 {
-                    lastGrainRate = grainRate;
                     pipe.SendData(context, new GrainRateEvent(grainRate));
                 }
 
-                if (lastStartPosition != startPosition)
+                if (UpdateIfChanged(ref lastStartPosition, startPosition))
                 {
-                    lastStartPosition = startPosition;
                     pipe.SendData(context, new GrainPositionEvent(startPosition.x, startPosition.y));
                 }
 
-                if (lastGrainPitch != grainPitch)
+                if (UpdateIfChanged(ref lastGrainPitch, grainPitch))
                 {
-                    lastGrainPitch = grainPitch;
                     pipe.SendData(context, new GrainPitchEvent(grainPitch.x, grainPitch.y));
                 }
 
-                if (lastGrainVolume != grainVolume)
+                if (UpdateIfChanged(ref lastGrainVolume, grainVolume))
                 {
-                    lastGrainVolume = grainVolume;
                     pipe.SendData(context, new GrainVolumeEvent(grainVolume.x, grainVolume.y));
                 }
 
-                if (!Mathf.Approximately(lastGrainVolumePower, grainVolumePower))
+                if (UpdateIfChanged(ref lastGrainVolumePower, grainVolumePower))
                 {
-                    lastGrainVolumePower = grainVolumePower;
                     pipe.SendData(context, new GrainVolumePowerEvent(grainVolumePower));
                 }
 
-                if (lastGrainPan != grainPan)
+                if (UpdateIfChanged(ref lastGrainPan, grainPan))
                 {
-                    lastGrainPan = grainPan;
                     pipe.SendData(context, new GrainPanEvent(grainPan.x, grainPan.y));
                 }
 
-                if (lastGrainDuration != grainDuration)
+                if (UpdateIfChanged(ref lastGrainDuration, grainDuration))
                 {
-                    lastGrainDuration = grainDuration;
                     pipe.SendData(context, new GrainDurationEvent(grainDuration.x, grainDuration.y));
                 }
 
-                if (!Mathf.Approximately(lastGrainShapePower, grainShapePower))
+                if (UpdateIfChanged(ref lastGrainShapePower, grainShapePower))
                 {
-                    lastGrainShapePower = grainShapePower;
                     ApplyGrainShapePower(grainShapePower);
                 }
             }
@@ -420,6 +413,28 @@ namespace NotJustSound.GranularSynth
                     ModulationSource.Mod3 => Mathf.Clamp01(modulation3),
                     _ => 0f
                 };
+            }
+
+            private static bool UpdateIfChanged(ref float previous, float current)
+            {
+                if (Mathf.Approximately(previous, current))
+                {
+                    return false;
+                }
+
+                previous = current;
+                return true;
+            }
+
+            private static bool UpdateIfChanged(ref Vector2 previous, Vector2 current)
+            {
+                if (previous == current)
+                {
+                    return false;
+                }
+
+                previous = current;
+                return true;
             }
         }
     }
