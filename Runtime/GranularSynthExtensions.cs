@@ -9,11 +9,8 @@ namespace NotJustSound.GranularSynth
     public static class GranularSynthExtensions
     {
         #region AudioSource Extensions
-
-        // Potentially re-usable methods for modulation.
         public static void SetModulation1(this AudioSource audioSource, float value)
         {
-            //if (audioSource.generator is not GranularGenerator) return;
             var instance = audioSource.generatorInstance;
             if (!ControlContext.builtIn.Exists(instance)) return;
 
@@ -22,7 +19,6 @@ namespace NotJustSound.GranularSynth
 
         public static void SetModulation2(this AudioSource audioSource, float value)
         {
-            //if (audioSource.generator is not GranularGenerator) return;
             var instance = audioSource.generatorInstance;
             if (!ControlContext.builtIn.Exists(instance)) return;
 
@@ -31,15 +27,15 @@ namespace NotJustSound.GranularSynth
 
         public static void SetModulation3(this AudioSource audioSource, float value)
         {
-            //if (audioSource.generator is not GranularGenerator) return;
             var instance = audioSource.generatorInstance;
             if (!ControlContext.builtIn.Exists(instance)) return;
 
             SendMessage(instance, new Modulation3Event(value));
         }
+        #endregion
 
-
-        // Granular Generator Parameter Update Methods
+        /* Granular Generator Parameter Update Methods. For real time modulation prefer using the SetModulation methods above.
+        #region AudioSource Deprecated Extensions
         public static void SetGrainRate(this AudioSource audioSource, float rate)
         {
             if (audioSource.generator is not GranularGenerator) return;
@@ -150,6 +146,7 @@ namespace NotJustSound.GranularSynth
         }
 
         #endregion
+        */
 
         #region Internal
 
