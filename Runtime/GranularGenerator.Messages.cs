@@ -69,4 +69,11 @@ namespace NotJustSound.GranularSynth
         public readonly NativeArray<float> shape;
         public GrainShapeEvent(NativeArray<float> shape) => this.shape = shape;
     }
+
+    // Message struct for modulation matrix updates
+    internal readonly struct ModulationMatrixEvent
+    {
+        public readonly NativeArray<ModulationSetting> settings;
+        public ModulationMatrixEvent(NativeArray<ModulationSetting> settings) => this.settings = settings;
+    }
 }

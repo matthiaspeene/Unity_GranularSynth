@@ -191,6 +191,19 @@ namespace NotJustSound.GranularSynth
                     pipe.SendData(context, message.Get<GrainShapeEvent>());
                     return Response.Handled;
                 }
+                if (message.Is<ModulationMatrixEvent>())
+                {
+                    var evt = message.Get<ModulationMatrixEvent>();
+
+                    if (modulationSettings.IsCreated)
+                    {
+                        modulationSettings.Dispose();
+                    }
+
+                    modulationSettings = evt.settings;
+                    PushModulatedOutputs(context, pipe);
+                    return Response.Handled;
+                }
                 #endregion
                 return Response.Unhandled;
             }

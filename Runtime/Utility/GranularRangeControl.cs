@@ -34,7 +34,8 @@ namespace NotJustSound.GranularSynth {
         public void setInput(float input) {
             float normalizedInput = Mathf.InverseLerp(inputRange.x, inputRange.y, input);
 
-            /* Testing Mod
+            granularSource.SetModulation1(normalizedInput);
+            /*
             float playbackRangeStart = Mathf.Lerp(playbackRangeScale.x, (playbackRangeScale.y - playbackRangeWidth), normalizedInput);
             float playRate = Mathf.Lerp(playRateRange.x, playRateRange.y, normalizedInput);
             float pitch = Mathf.Lerp(pitchScale.x, (pitchScale.y - pitchRangeWidth), normalizedInput);
@@ -45,7 +46,6 @@ namespace NotJustSound.GranularSynth {
             granularSource.SetGrainPitch(pitch, pitch + pitchRangeWidth);
             granularSource.SetGrainVolume(gain, gain + gainRangeWidth);
             */
-            granularSource.SetModulation1(normalizedInput);
         }
     }
 }

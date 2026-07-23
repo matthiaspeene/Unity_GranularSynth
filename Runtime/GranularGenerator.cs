@@ -84,6 +84,7 @@ namespace NotJustSound.GranularSynth
         private Vector2 m_LastGrainPan;
         private float m_LastGrainVolumePower;
         private Vector2 m_LastGrainDuration;
+        private ModulationSetting[] m_LastModulationSettings;
 
         private List<GeneratorInstance> m_ActiveInstances = new List<GeneratorInstance>();
 
@@ -488,6 +489,11 @@ namespace NotJustSound.GranularSynth
                 BroadcastMessage(new GrainPanEvent(GrainPanRange.x, GrainPanRange.y));
             }
 
+            if (HasModulationMatrixChanged())
+            {
+                BroadcastModulationMatrix();
+            }
+
             ValidateGrainShape();
         }
 
@@ -604,6 +610,54 @@ namespace NotJustSound.GranularSynth
 
                 ControlContext.builtIn.SendMessage(instance, ref message);
             }
+        }
+
+        private bool HasModulationMatrixChanged()
+        {
+            if (m_LastModulationSettings == null)
+            {
+                return modulationSettings != null && modulationSettings.Length > 0;
+            }
+
+            if (modulationSettings == null)
+            {
+                return m_LastModulationSettings.Length > 0;
+            }
+
+            if (m_LastModulationSettings.Length != modulationSettings.Length)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < modulationSettings.Length; i++)
+            {
+                if (m_LastModulationSettings[i].source != modulationSettings[i].source ||
+                    m_LastModulationSettings[i].target != modulationSettings[i].target ||
+                    !Mathf.Approximately(m_LastModulationSettings[i].amount, modulationSettings[i].amount))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void BroadcastModulationMatrix()
+        {
+            if (!liveUpdate || !HasLiveInstances())
+            {
+                return;
+            }
+
+            m_LastModulationSettings = modulationSettings != null
+                ? (ModulationSetting[])modulationSettings.Clone()
+                : null;
+
+            var matrix = modulationSettings != null
+                ? new NativeArray<ModulationSetting>(modulationSettings, Allocator.Persistent)
+                : new NativeArray<ModulationSetting>(0, Allocator.Persistent);
+
+            BroadcastMessage(new ModulationMatrixEvent(matrix));
         }
 
         private bool HasLiveInstances()
