@@ -195,7 +195,17 @@ namespace NotJustSound.GranularSynth
 
             var instance = context.AllocateGenerator(
                 realtime,
-                new Control(),
+                new Control(
+                    this,
+                    modulationSettings,
+                    grainRate,
+                    StartPositionRange,
+                    GrainPitchRange,
+                    GrainVolumeRange,
+                    GrainPanRange,
+                    grainVolumePower,
+                    GrainDurationRange,
+                    grainShapePower),
                 nestedConfiguration,
                 creationParameters);
 
@@ -553,11 +563,14 @@ namespace NotJustSound.GranularSynth
                 // Update local cache
                 bakedGrainShape.CopyFrom(tempShape);
 
-                // Create persistent array for message
-                var msgShape = new NativeArray<float>(bakedGrainShapeLength, Allocator.Persistent);
-                msgShape.CopyFrom(tempShape);
+                if (HasLiveInstances())
+                {
+                    // Create persistent array for message only when something can receive it.
+                    var msgShape = new NativeArray<float>(bakedGrainShapeLength, Allocator.Persistent);
+                    msgShape.CopyFrom(tempShape);
 
-                BroadcastMessage(new GrainShapeEvent(msgShape));
+                    BroadcastMessage(new GrainShapeEvent(msgShape));
+                }
             }
 
             tempShape.Dispose();
@@ -591,6 +604,19 @@ namespace NotJustSound.GranularSynth
 
                 ControlContext.builtIn.SendMessage(instance, ref message);
             }
+        }
+
+        private bool HasLiveInstances()
+        {
+            for (int i = m_ActiveInstances.Count - 1; i >= 0; i--)
+            {
+                if (ControlContext.builtIn.Exists(m_ActiveInstances[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         #endregion
